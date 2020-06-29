@@ -1,0 +1,12 @@
+version: "3" #version of docker-compose
+
+services: #that make up our application
+  app: #name of our service/app
+    build:
+      context: .  # '.' is cur directory
+    ports:
+      - "8000:8000" #map project from port 8000 on local to 8000 on image
+    volumes: #allows the changes in local machine to show in container in realtime without restarting docker
+      - ./app:/app  #maps app dir in project to app dir in docker image
+    command: > #to run the app on port 8000 from all ip addresses on docker - '>' for multiline command
+      sh -c "python manage.py runserver 0.0.0.0:8000"
