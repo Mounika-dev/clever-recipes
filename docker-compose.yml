@@ -9,4 +9,19 @@ services: #that make up our application
     volumes: #allows the changes in local machine to show in container in realtime without restarting docker
       - ./app:/app  #maps app dir in project to app dir in docker image
     command: > #to run the app on port 8000 from all ip addresses on docker - '>' for multiline command
-      sh -c "python manage.py runserver 0.0.0.0:8000"
+      sh -c "python manage.py wait_for_db &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=app
+      - DB_USER=postgres
+      - DB_PASS=hellopw
+    depends_on:
+      - db
+  db:
+    image: postgres:13-alpine
+    environment:
+      - POSTGRES_DB=app
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=hellopw
